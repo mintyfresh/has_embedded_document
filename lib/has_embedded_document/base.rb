@@ -19,7 +19,7 @@ module HasEmbeddedDocument
     # @return [void]
     def self.attribute(name, type = :string, default: nil, **options)
       name = name.to_sym
-      type = ActiveModel::Type.lookup(type, **options)
+      type = ActiveRecord::Type.lookup(type, **options)
 
       attributes[name] = Attribute.new(name, type, default).freeze
 
@@ -27,15 +27,14 @@ module HasEmbeddedDocument
       define_method("#{name}=") { |value| write_attribute(name, value) }
     end
 
-    # @param parent [Object]
-    def initialize(parent, store_name)
-      @parent     = parent
-      @store_name = store_name
+    # @param attributes [Hash{String => Object}]
+    def initialize(attributes = {})
+      @attributes = attributes
     end
 
     # @return [Hash{Symbol => Object}]
     def attributes
-      self.class.attributes.transform_values { |attribute| read_attribute(attribute.name) }
+      @attributes.dup
     end
 
     # @param attributes [Hash{Symbol => Object}]
@@ -46,13 +45,30 @@ module HasEmbeddedDocument
       end
     end
 
+    # @return [Base]
+    def dup
+      self.class.new(attributes)
+    end
+
+    # @param attributes [Hash]
+    # @return [Base]
+    def dup_with(attributes)
+      dup.tap do |object|
+        object.attributes = attributes
+      end
+    end
+
     # @param name [Symbol]
     def read_attribute(name)
       attribute = self.class.attributes[name.to_sym]
       raise ArgumentError, "Unknown attribute: #{name}" if attribute.nil?
 
-      @parent.send(@store_name).fetch(name.to_s) do
-        attribute.default
+      @attributes.fetch(name.to_s) do
+        case (default = attribute.default)
+        when Proc   then instance_eval(&default)
+        when Symbol then send(default)
+        else default
+        end
       end
     end
 
@@ -63,7 +79,18 @@ module HasEmbeddedDocument
       attribute = self.class.attributes[name.to_sym]
       raise ArgumentError, "Unknown attribute: #{name}" if attribute.nil?
 
-      @parent.send(@store_name)[name.to_s] = attribute.type.cast(value)
+      @attributes[name.to_s] = attribute.type.cast(value)
+    end
+
+    # @return [Hash]
+    def to_h
+      attributes
+    end
+
+    # @param other [Base]
+    # @return [Boolean]
+    def ==(other)
+      other.is_a?(self.class) && other.attributes == @attributes
     end
   end
 end
