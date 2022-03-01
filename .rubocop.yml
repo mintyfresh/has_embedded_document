@@ -10,6 +10,9 @@ AllCops:
 Layout/LineLength:
   Max: 120
 
+Layout/AccessModifierIndentation:
+  EnforcedStyle: outdent
+
 Layout/SpaceInLambdaLiteral:
   EnforcedStyle: require_space
 

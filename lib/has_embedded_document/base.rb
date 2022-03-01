@@ -82,6 +82,16 @@ module HasEmbeddedDocument
       @attributes[name.to_s] = attribute.type.cast(value)
     end
 
+    # @return [Boolean]
+    def readonly?
+      @attributes.frozen?
+    end
+
+    # @return [self]
+    def readonly!
+      @attributes.freeze || self
+    end
+
     # @return [Hash]
     def to_h
       attributes
