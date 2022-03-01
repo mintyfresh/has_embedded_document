@@ -16,9 +16,21 @@ And then execute:
 
     $ bundle install
 
-Or install it yourself as:
+Then run:
 
-    $ gem install has_embedded_document
+    $ bin/rails has_embedded_document:install
+
+### Installing the DSL
+
+Add to your application record class:
+
+```ruby
+class ApplicationRecord < ActiveRecord::Base
+  extend HasEmbeddedDocument::DSL
+
+  # ...
+end
+```
 
 ## Usage
 
