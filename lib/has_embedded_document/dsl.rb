@@ -48,7 +48,7 @@ module HasEmbeddedDocument
       validate do
         documents = send(name)
 
-        documents.each_with_index do |document, index|
+        documents&.each_with_index do |document, index|
           next if document.valid?
 
           document.errors.each do |error|
