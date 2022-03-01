@@ -29,7 +29,7 @@ module HasEmbeddedDocument
 
     # @param attributes [Hash{String => Object}]
     def initialize(attributes = {})
-      @attributes = attributes
+      @attributes = attributes.stringify_keys
     end
 
     # @return [Hash{Symbol => Object}]

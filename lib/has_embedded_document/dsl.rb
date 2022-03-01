@@ -82,8 +82,8 @@ module HasEmbeddedDocument
         return document if instance_variable_defined?(:"@__#{name}_cache")
 
         attributes = reader.call(self)
-        document   = attributes && document_class.new(attributes.dup)
-        instance_variable_set(:"@__#{name}_cache", document.readonly!)
+        document   = attributes && document_class.new(attributes.dup).readonly!
+        instance_variable_set(:"@__#{name}_cache", document)
       end
     end
 
