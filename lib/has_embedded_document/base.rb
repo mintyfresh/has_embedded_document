@@ -89,7 +89,7 @@ module HasEmbeddedDocument
 
     # @return [self]
     def readonly!
-      @attributes.freeze || self
+      tap { @attributes.freeze }
     end
 
     # @return [Hash]
