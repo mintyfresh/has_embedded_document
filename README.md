@@ -22,7 +22,58 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+class Address < ApplicationDocument
+  attribute :line1, :string
+  attribute :city, :string
+  attribute :region, :string
+  attribute :country, :string
+end
+```
+
+```ruby
+class User < ApplicationRecord
+  has_embedded_document :address, Address
+end
+```
+
+```ruby
+user = User.new
+user.address = Address.new(country: 'CA', region: 'ON')
+
+user.address.country # => 'CA'
+user.address.region  # => 'ON'
+```
+
+### Validations
+
+```ruby
+class Address < ApplicationDocument
+  attribute :line1, :string
+  attribute :city, :string
+  attribute :region, :string
+  attribute :country, :string
+
+  validates :line1, :city, :region, presence: true
+  validates :country, inclusion: { in: ['CA', 'US'] }
+end
+```
+
+```ruby
+user = User.new
+user.address = Address.new(country: 'CA', region: 'ON', city: 'Toronto')
+
+user.valid? # => false
+user.errors # => address.line1 can't be blank, etc.
+```
+
+### Disable Validations
+
+```ruby
+class User < ApplicationRecord
+  has_embedded_document :address, Address, validate: false
+end
+```
 
 ## Development
 
@@ -32,4 +83,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/has_embedded_document.
+Bug reports and pull requests are welcome on GitHub at https://github.com/mintyfresh/has_embedded_document.
