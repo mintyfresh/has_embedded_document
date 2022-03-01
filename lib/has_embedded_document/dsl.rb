@@ -12,7 +12,7 @@ module HasEmbeddedDocument
       define_embedded_writer(name, document_class)
 
       validates(name, presence: { message: :required }) unless optional
-      validate_embedded_document(name) if validate
+      validate_embedded_document(name, **(validate.is_a?(Hash) ? validate : {})) if validate
     end
 
     # @param name [Symbol]
@@ -25,13 +25,13 @@ module HasEmbeddedDocument
       define_embedded_array_writer(name, document_class)
 
       validates(name, presence: { message: :required }) unless optional
-      validate_many_embedded_documents(name) if validate
+      validate_many_embedded_documents(name, **(validate.is_a?(Hash) ? validate : {})) if validate
     end
 
     # @param name [Symbol]
     # @return [void]
-    def validate_embedded_document(name)
-      validate do
+    def validate_embedded_document(name, **options)
+      validate(**options) do
         document = send(name)
 
         if document&.invalid?
@@ -44,8 +44,8 @@ module HasEmbeddedDocument
 
     # @param name [Symbol]
     # @return [void]
-    def validate_many_embedded_documents(name)
-      validate do
+    def validate_many_embedded_documents(name, **options)
+      validate(**options) do
         documents = send(name)
 
         documents&.each_with_index do |document, index|
