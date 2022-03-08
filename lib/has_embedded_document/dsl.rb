@@ -99,8 +99,8 @@ module HasEmbeddedDocument
         attributes = value.is_a?(document_class) ? value.attributes : value
         writer.call(self, attributes)
 
-        document = attributes && document_class.new(attributes.dup)
-        instance_variable_set(:"@__#{name}_cache", document.readonly!)
+        document = attributes && document_class.new(attributes.dup).readonly!
+        instance_variable_set(:"@__#{name}_cache", document)
       end
     end
 
