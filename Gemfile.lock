@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    has_embedded_document (0.1.1)
+    has_embedded_document (0.1.2)
       activerecord (>= 5.2.0)
 
 GEM
