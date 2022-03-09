@@ -9,6 +9,11 @@ module HasEmbeddedDocument
 
     Attribute = Struct.new(:name, :type, :default)
 
+    def self.inherited(subclass)
+      super
+      subclass.instance_variable_set(:@attributes, @attributes.dup)
+    end
+
     # @return [Hash{Symbol => Attribute}]
     def self.attributes
       @attributes ||= {}
