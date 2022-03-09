@@ -72,6 +72,8 @@ module HasEmbeddedDocument
       end
     end
 
+    alias [] read_attribute
+
     # @param name [Symbol]
     # @param value [Object]
     # @return [void]
@@ -81,6 +83,8 @@ module HasEmbeddedDocument
 
       @attributes[name.to_s] = attribute.type.cast(value)
     end
+
+    alias []= write_attribute
 
     # @return [Boolean]
     def readonly?
@@ -96,6 +100,8 @@ module HasEmbeddedDocument
     def to_h
       attributes
     end
+
+    alias to_hash to_h
 
     # @param other [Base]
     # @return [Boolean]
