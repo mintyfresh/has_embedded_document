@@ -142,22 +142,22 @@ module HasEmbeddedDocument
     # @param name [Symbol]
     # @return [Proc]
     def wrapped_attribute_reader(name)
-      if respond_to?(:has_attribute?) && has_attribute?(name)
-        -> (object) { object.read_attribute(name) }
-      else
+      if instance_methods.include?(:"#{name}")
         wrapped_method = instance_method(name)
         -> (object) { wrapped_method.bind(object).call }
+      else
+        -> (object) { object.read_attribute(name) }
       end
     end
 
     # @param name [Symbol]
     # @return [Proc]
     def wrapped_attribute_writer(name)
-      if respond_to?(:has_attribute?) && has_attribute?(name)
-        -> (object, value) { object.write_attribute(name, value) }
-      else
-        wrapped_method = instance_method("#{name}=")
+      if instance_methods.include?(:"#{name}=")
+        wrapped_method = instance_method(:"#{name}=")
         -> (object, value) { wrapped_method.bind(object).call(value) }
+      else
+        -> (object, value) { object.write_attribute(name, value) }
       end
     end
   end
