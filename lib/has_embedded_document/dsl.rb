@@ -81,7 +81,8 @@ module HasEmbeddedDocument
         document = instance_variable_get(:"@__#{name}_cache")
         return document if instance_variable_defined?(:"@__#{name}_cache")
 
-        attributes = reader.call(self)
+        value      = reader.call(self)
+        attributes = value.is_a?(document_class) ? value.attributes : value
         document   = attributes && document_class.new(attributes.dup).readonly!
         instance_variable_set(:"@__#{name}_cache", document)
       end
@@ -116,7 +117,7 @@ module HasEmbeddedDocument
         documents = instance_variable_get(:"@__#{name}_cache")
         return documents if instance_variable_defined?(:"@__#{name}_cache")
 
-        values    = reader.call(self)
+        values    = reader.call(self)&.map { |value| value.is_a?(document_class) ? value.attributes : value }
         documents = values&.map { |attributes| document_class.new(attributes.dup).readonly! }
         instance_variable_set(:"@__#{name}_cache", documents)
       end
